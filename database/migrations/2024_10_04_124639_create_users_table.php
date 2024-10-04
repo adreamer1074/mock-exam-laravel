@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->enum('role', ['admin', 'standard', 'editor']);
+            $table->text('favorites')->nullable(); // JSON or serialized list of exam IDs
             $table->timestamps();
+            $table->softDeletes(); // Logical delete
         });
+        
     }
 
     /**

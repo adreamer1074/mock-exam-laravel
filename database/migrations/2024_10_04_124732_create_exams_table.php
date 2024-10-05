@@ -8,6 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 各ユーザーが作成した試験をデータベースに挿入し、
+     * 試験の公開/非公開設定や管理機能の動作確認が可能です。
      */
     public function up(): void
     {

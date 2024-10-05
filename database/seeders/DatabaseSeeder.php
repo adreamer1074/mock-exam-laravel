@@ -2,21 +2,34 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // Call the UserSeeder to seed the users table
+        $this->call(UserSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Call the ExamCategorySeeder to seed the exam_categories table
+        $this->call(ExamCategorySeeder::class);
+
+        // Call the ExamSeeder to seed the exams table
+        $this->call(ExamSeeder::class);
+
+        // Call the QuestionSeeder to seed the questions table
+        $this->call(QuestionSeeder::class);
+
+        // Call the AnswerSeeder to seed the answers table
+        $this->call(AnswerSeeder::class);
+
+        // Call the TodoListSeeder to seed the todo_lists table
+        $this->call(TodoListSeeder::class);
+
+        // Call the ExamResultSeeder to seed the exam_results table
+        $this->call(ExamResultSeeder::class);
     }
 }

@@ -8,6 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 試験の結果データが生成され、
+     * ユーザーが試験を完了してスコアが保存される動作をテストすることができます。
      */
     public function up(): void
     {

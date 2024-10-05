@@ -13,21 +13,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exam_questions', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('exam_id');
+            $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
             $table->text('question_text');
             $table->text('explanation')->nullable();
             $table->timestamps();
-    
-            // 外部キー制約の追加を一時的にコメントアウト
             // $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
+        });
+            // 外部キー制約の追加を一時的にコメントアウト
                 /*ALTER TABLE exam_questions
                 ADD CONSTRAINT exam_questions_exam_id_foreign
                 FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;
 
                 */
-        });
         
     }
 

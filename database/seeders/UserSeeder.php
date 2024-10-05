@@ -9,20 +9,26 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        User::create([
-            'name' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'admin',
-            'favorites' => json_encode([]),
-        ]);
+        // すでに存在する場合はスキップ
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'admin',
+                'password' => bcrypt('password'), // パスワードをハッシュ化
+                'role' => 'admin',
+                'favorites' => json_encode([]), // 空の配列をJSON形式で保存
+            ]
+        );
 
-        User::create([
-            'name' => 'test',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-            'role' => 'standard',
-            'favorites' => json_encode([]),
-        ]);
+        // 他のユーザーも同様に追加
+        User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'standard user',
+                'password' => bcrypt('password'),
+                'role' => 'standard',
+                'favorites' => json_encode([]),
+            ]
+        );
     }
 }

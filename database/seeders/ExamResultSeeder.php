@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\ExamResult;
+use Illuminate\Support\Facades\DB;
 
 class ExamResultSeeder extends Seeder
 {

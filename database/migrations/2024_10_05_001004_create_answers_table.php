@@ -17,8 +17,8 @@ class CreateAnswersTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
-            $table->foreignId('question_id')->constrained('exam_questions')->onDelete('cascade');
-            $table->foreignId('option_id')->constrained('question_options')->onDelete('cascade');
+            // $table->foreignId('question_id')->constrained('exam_questions')->onDelete('cascade');
+            // $table->foreignId('option_id')->constrained('question_options')->onDelete('cascade');
             $table->boolean('is_correct')->default(false);
             $table->timestamps();
         });

@@ -10,7 +10,7 @@ class Exam extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'description', 'user_id', 'is_published', 'category_id'];
+    protected $fillable = ['name', 'description', 'user_id', 'is_published', 'category_id'];
 
     public function user()
     {

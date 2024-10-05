@@ -4,23 +4,24 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Exam;
+use Illuminate\Support\Facades\DB;
 
 class ExamSeeder extends Seeder
 {
     public function run()
     {
         Exam::create([
-            'title' => 'Math Exam',
-            'user_id' => 1, // John Doe's exam
+            'name' => 'Math Exam',
+            'user_id' => 1, // 
             'category_id' => 1,
-            'is_published' => true,
+            'is_public' => true,
         ]);
 
         Exam::create([
-            'title' => 'Science Exam',
-            'user_id' => 2, // Jane Smith's exam
+            'name' => 'Science Exam',
+            'user_id' => 2, //
             'category_id' => 2,
-            'is_published' => false,
+            'is_public' => false,
         ]);
     }
 }

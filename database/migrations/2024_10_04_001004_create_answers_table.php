@@ -8,19 +8,17 @@ class CreateAnswersTable extends Migration
 {
     /**
      * Run the migrations.
-     *
+     *外部制約注意
      * @return void
      */
     public function up()
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
-            // $table->foreignId('question_id')->constrained('exam_questions')->onDelete('cascade');
-            // $table->foreignId('option_id')->constrained('question_options')->onDelete('cascade');
+            $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
             $table->boolean('is_correct')->default(false);
-            $table->timestamps();
+            $table->text('answer_text');
+            $table->timestamps(); 
         });
     }
 

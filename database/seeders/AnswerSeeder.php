@@ -1,37 +1,43 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Answer;
+use App\Models\Question;
 
 class AnswerSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        Answer::create([
-            'question_id' => 1,
-            'answer_text' => '4',
-            'is_correct' => true,
-        ]);
+        // 全ての質問に対してダミーの回答を挿入
+        $questions = Question::all();
 
-        Answer::create([
-            'question_id' => 1,
-            'answer_text' => '5',
-            'is_correct' => false,
-        ]);
+        foreach ($questions as $question) {
+            // 正しい回答
+            Answer::create([
+                'question_id' => $question->id,
+                'is_correct' => true,
+                'answer_text' => 'This is the correct answer for question ' . $question->id,
+            ]);
 
-        Answer::create([
-            'question_id' => 2,
-            'answer_text' => 'Water',
-            'is_correct' => true,
-        ]);
+            // 間違った回答（複数追加）
+            Answer::create([
+                'question_id' => $question->id,
+                'is_correct' => false,
+                'answer_text' => 'This is an incorrect answer for question ' . $question->id,
+            ]);
 
-        Answer::create([
-            'question_id' => 2,
-            'answer_text' => 'Hydrogen',
-            'is_correct' => false,
-        ]);
+            Answer::create([
+                'question_id' => $question->id,
+                'is_correct' => false,
+                'answer_text' => 'This is another incorrect answer for question ' . $question->id,
+            ]);
+        }
     }
 }

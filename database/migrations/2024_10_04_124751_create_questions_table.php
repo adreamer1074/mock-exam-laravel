@@ -22,8 +22,8 @@ return new class extends Migration
             // $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
         });
             // 外部キー制約の追加を一時的にコメントアウト
-                /*ALTER TABLE exam_questions
-                ADD CONSTRAINT exam_questions_exam_id_foreign
+                /*ALTER TABLE questions
+                ADD CONSTRAINT questions_exam_id_foreign
                 FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;
 
                 */

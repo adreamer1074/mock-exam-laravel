@@ -30,15 +30,12 @@
 <nav class="bg-gray-100 shadow-inner py-2">
     <div class="container mx-auto flex justify-center space-x-8">
         <!-- Centered Navigation Links -->
-        {{-- {{ route('home') }}"
-        {{ route('exams.popular') }}"
-        {{ route('exams.index') }}"
-        {{ route('exams.create') }}" --}}
-        <a href="" class="text-gray-700 hover:text-blue-600">Home</a>
-        <a href="" class="text-gray-700 hover:text-blue-600">Popular Exams</a>
-        <a href="" class="text-gray-700 hover:text-blue-600">All Exams</a>
+        {{-- {{ route('exams.create') }}" --}}
+        <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600">Home</a>
+        <a href="{{ route('popular.exams') }}" class="text-gray-700 hover:text-blue-600">Popular Exams</a>
+        <a href="{{ route('all.exams') }}" class="text-gray-700 hover:text-blue-600">All Exams</a>
         <a href="" class="text-gray-700 hover:text-blue-600">Create Exams</a>
-        
+
         <!-- Search Bar -->
         <form class="relative flex items-center">
             <input type="text" name="search" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search...">

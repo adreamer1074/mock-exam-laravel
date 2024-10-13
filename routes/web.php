@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExamController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [App\Http\Controllers\ExamController::class, 'home'])->name('home');
+Route::get('/popular-exams', [ExamController::class, 'popularExams'])->name('popular.exams');
+Route::get('/all-exams', [ExamController::class, 'allExams'])->name('all.exams');
+Route::get('/exams/category/{id}', [ExamController::class, 'showByCategory'])->name('exams.category');
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

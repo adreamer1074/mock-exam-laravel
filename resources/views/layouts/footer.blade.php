@@ -2,10 +2,10 @@
     <div class="container mx-auto flex justify-between items-center">
         <!-- 左側: サイト情報 -->
         <div class="flex flex-col items-start">
-            <img src="/images/logo.png" alt="FinFocus Logo" class="w-12 h-12 mb-2">
-            <h1 class="text-lg font-semibold">FinFocus</h1>
+            <img src="/images/logo.png" alt="Poefy Logo" class="w-12 h-12 mb-2">
+            <h1 class="text-lg font-semibold">Poefy</h1>
             <p class="text-sm mt-2">
-                © 2024 FinFocus. All rights reserved.
+                © 2024 Poefy. All rights reserved.
             </p>
         </div>
 

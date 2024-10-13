@@ -7,7 +7,7 @@
         <!-- Left: Logo and Site Name -->
         <div class="flex items-center space-x-4">
             <img src="/images/logo.png" alt="logo" class="w-12 h-12">
-            <h1 class="text-xl font-bold text-gray-800">FinFocus</h1>
+            <h1 class="text-xl font-bold text-gray-800">Poefy</h1>
         </div>
 
         <!-- Right: Username and Logout -->

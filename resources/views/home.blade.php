@@ -4,7 +4,7 @@
         <div class="container mx-auto">
             <!-- Welcome section -->
             <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-blue-600">Welcome to FinFocus</h1>
+                <h1 class="text-4xl font-bold text-blue-600">Welcome to Poefy</h1>
                 <p class="text-lg text-gray-600 mt-2">Your platform for practicing mock exams and sharpening your skills!</p>
             </div>
 

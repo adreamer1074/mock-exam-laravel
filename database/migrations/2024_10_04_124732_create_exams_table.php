@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name');
             // $table->foreignId('category_id')->constrained('exam_categories')->onDelete('cascade');
             $table->boolean('is_public')->default(true);
+            $table->text('description')->nullable();
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

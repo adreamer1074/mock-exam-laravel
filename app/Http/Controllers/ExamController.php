@@ -18,6 +18,7 @@ class ExamController extends Controller
         // Get all categories
         $categories = ExamCategory::all();
         return view('home', compact('categories'));
+
     }
 
     /**
@@ -29,11 +30,16 @@ class ExamController extends Controller
             ->join('users', 'users.id', '=', 'exams.user_id')
             ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id')
             ->where('exams.is_public', '=', 1)
+            ->where(function ($query) {
+                $query->where('del_flg', '!=', 1)
+                      ->orWhereNull('del_flg'); // del_flgがnullまたは!= 1のレコードを取得
+            })
             ->orderBy('exams.views', 'desc')
             ->limit(10)
             ->get();
 
             return view('popular-exams', compact('popularExams'));
+
         }
 
     /**
@@ -45,6 +51,10 @@ class ExamController extends Controller
             ->join('users', 'users.id', '=', 'exams.user_id')
             ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id')
             ->where('exams.is_public', '=', 1)
+            ->where(function ($query) {
+                $query->where('del_flg', '!=', 1)
+                      ->orWhereNull('del_flg'); // del_flgがnullまたは!= 1のレコードを取得
+            })
             ->orderBy('exams.created_at', 'desc')
             ->get();
 
@@ -55,6 +65,10 @@ class ExamController extends Controller
     {
     $exams = Exam::where('category_id', $id)
         ->where('is_public', 1)
+        ->where(function ($query) {
+            $query->where('del_flg', '!=', 1)
+                  ->orWhereNull('del_flg'); // del_flgがnullまたは!= 1のレコードを取得
+        })
         ->with('user') // Assuming you want to show user details too
         ->orderBy('created_at', 'desc')
         ->get();

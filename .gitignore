@@ -18,3 +18,8 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
+.env.example
+.editorconfig
+.gitattributes
+docker-compose.yml
+document.md

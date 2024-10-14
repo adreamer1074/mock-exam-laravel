@@ -7,7 +7,7 @@
                     <div class="bg-white shadow-lg rounded-lg p-6">
                         <h2 class="text-xl font-bold">{{ $exam->name }}</h2>
                         <p>{{ $exam->description }}</p>
-                        <a href="{{ route('exams.index')}}" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                        <a href="{{ route('exams.show', $exam->id) }}" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
                             Take Exam
                         </a>
                     </div>

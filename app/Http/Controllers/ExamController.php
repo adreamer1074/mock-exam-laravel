@@ -7,6 +7,9 @@ use App\Models\Exam;
 use App\Models\ExamCategory;
 use App\Models\ExamResult;
 use App\Models\ExamAnswer;
+use App\Models\ExamQuestion;
+use App\Models\QuestionOption;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -23,44 +26,40 @@ class ExamController extends Controller
         return view('home', compact('categories'));
     }
 
-    /**
-     * Show popular exams based on the views count (limit 10).
-     */
     public function popularExams()
     {
-        $popularExams = Exam::select('exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.views', 'exams.created_at')
+        $popularExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.views', 'exams.created_at')
             ->join('users', 'users.id', '=', 'exams.user_id')
             ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id')
             ->where('exams.is_public', '=', 1)
             ->where(function ($query) {
                 $query->where('del_flg', '!=', 1)
-                    ->orWhereNull('del_flg'); // del_flgがnullまたは!= 1のレコードを取得
+                    ->orWhereNull('del_flg');
             })
             ->orderBy('exams.views', 'desc')
             ->limit(10)
             ->get();
-
+    
         return view('popular-exams', compact('popularExams'));
     }
-
-    /**
-     * Show all public exams.
-     */
+    
     public function allExams()
     {
-        $allExams = Exam::select('exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.created_at')
+        $allExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.created_at')
             ->join('users', 'users.id', '=', 'exams.user_id')
             ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id')
             ->where('exams.is_public', '=', 1)
             ->where(function ($query) {
                 $query->where('del_flg', '!=', 1)
-                    ->orWhereNull('del_flg'); // del_flgがnullまたは!= 1のレコードを取得
+                    ->orWhereNull('del_flg');
             })
             ->orderBy('exams.created_at', 'desc')
             ->get();
-
+    
         return view('all-exams', compact('allExams'));
     }
+    
+
 
     public function showByCategory($id)
     {
@@ -90,13 +89,12 @@ class ExamController extends Controller
                 $query->where('del_flg', '!=', 1)
                     ->orWhereNull('del_flg');
             })
+            ->with('category', 'user') // リレーションを事前ロード
             ->orderBy('created_at', 'desc')
-            ->with('category', 'user')
             ->get();
 
         return view('exams.index', compact('exams'));
     }
-
     /**
      * Display the specified resource.
      */
@@ -113,14 +111,18 @@ class ExamController extends Controller
         return view('exams.show', compact('exam'));
     }
 
-
-    public function submit(Request $request, $examId)
+    public function submitResult(Request $request, $examId)
     {
         // ユーザーのIDを取得
         $userId = auth()->id();
     
         // ユーザーが選択した答えをループして保存
         foreach ($request->input('answers') as $questionId => $optionIds) {
+            // ラジオボタンの場合は単一の値（文字列）なので配列に変換
+            if (!is_array($optionIds)) {
+                $optionIds = [$optionIds];
+            }
+    
             foreach ($optionIds as $optionId) {
                 ExamAnswer::create([
                     'user_id' => $userId,
@@ -148,87 +150,119 @@ class ExamController extends Controller
         ]);
     
         // 結果ページへリダイレクト
-        return redirect()->route('exam.results', $examId);
+        return redirect()->route('exam.result', $examId)->withInput($request->all());
     }
+    
 
-    public function submitResult(Request $request, $examId)
-{
-    $request->validate([
-        'answers' => 'required|array',
-        'answers.*' => 'array', // 各質問の選択肢は配列
-    ]);
 
-    // 結果を表示するためにリダイレクト
-    return redirect()->route('exam.result', $examId)->withInput($request->all());
-}
+    /**
+     * 点数計算
+     */
+    private function calculateScore($userAnswers, $examId)
+    {
+        // Exam IDからExamモデルを取得
+        $exam = Exam::with('questions.options')->findOrFail($examId);
+    
+        $score = 0;
+    
+        foreach ($exam->questions as $question) {
+            // 正しい回答を取得
+            $correctAnswers = $question->options->where('is_correct', true)->pluck('id')->toArray();
+            
+            // ユーザーの回答があるか確認
+            if (isset($userAnswers[$question->id])) {
+                // ユーザーが選択した回答
+                $selectedAnswers = $userAnswers->where('question_id', $question->id)->pluck('option_id')->toArray();
+                
+                // 正しい回答と選択した回答を比較
+                // 全ての正解が選択され、かつ不正解の選択肢が選択されていない場合に加点
+                if (array_diff($correctAnswers, $selectedAnswers) === [] && array_diff($selectedAnswers, $correctAnswers) === []) {
+                    $score++;
+                }
+            }
+        }
+    
+        return $score;
+    }
     
 
 
     /**
      * Show result for a specific exam.
-     * 問題を見直す
      */
-    public function showResult(Request $request, $examId)
+    public function showResult($examId)
     {
-        // ユーザーが選択した回答
-        $answers = $request->input('answers', []);
-    
-        // 試験を取得
-        $exam = Exam::with(['questions.options'])->findOrFail($examId);
-    
-        // スコアを計算
-        $score = $this->calculateScore($answers, $exam);
-    
-        // 提出日時を取得
-        $submittedAt = now();
-    
-        return view('exams.result', compact('exam', 'answers', 'score', 'submittedAt'));
+        // ユーザーのIDを取得
+        $userId = auth()->id();
+
+        // ユーザーの回答を取得
+        $userAnswers = ExamAnswer::where('user_id', $userId)
+            ->where('exam_id', $examId)
+            ->get()
+            ->groupBy('question_id');
+
+        // 試験データを取得
+        $exam = Exam::with('questions.options')->findOrFail($examId);
+
+        // ユーザーのスコアを取得
+        $result = ExamResult::where('user_id', $userId)->where('exam_id', $examId)->firstOrFail();
+        $score = $result->score;
+        $submittedAt = $result->completed_at;
+
+        // 結果ページを表示
+        return view('exams.result', compact('exam', 'userAnswers', 'score', 'submittedAt'));
     }
-    
-    
-    private function calculateScore($answers, $exam)
-    {
-        $score = 0;
-        foreach ($exam->questions as $question) {
-            // 正しい回答を取得
-            $correctAnswers = $question->options->where('is_correct', true)->pluck('id')->toArray();
-            // ユーザーの選択肢が正しいか確認
-            if (isset($answers[$question->id]) && array_diff($correctAnswers, $answers[$question->id]) === []) {
-                $score++;
-            }
-        }
-        return $score;
-    }
-    
+
+
+
     // Show the create form
     public function create()
     {
         $categories = ExamCategory::all(); // すべてのカテゴリを取得
 
-        return view('exams.create', compact('categories'));// exams/create.blade.phpビューを返す
+        return view('exams.create', compact('categories')); // exams/create.blade.phpビューを返す
     }
 
     // Store a newly created exam
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        // Validate the incoming request data
+        $validated = $request->validate([
             'category_id' => 'required|exists:exam_categories,id',
-            'description' => 'nullable|string',
-            'is_public' => 'required|boolean', // バリデーションを追加
-
+            'name' => 'required|string|max:255',
+            'is_public' => 'boolean',
+            'questions.*.text' => 'required|string',
+            'questions.*.options.*' => 'required|string',
+            'questions.*.correct' => 'nullable|array',
         ]);
 
-        $exam = new Exam();
-        $exam->user_id = Auth::id(); // 現在ログイン中のユーザーIDを取得
-        $exam->name = $request->name;
-        $exam->category_id = $request->category_id;
-        $exam->description = $request->description;
-        $exam->is_public = $request->is_public ?? 0;    
-        $exam->save();
+        // Create the exam
+        $exam = Exam::create([
+            'user_id' => Auth::id(),
+            'category_id' => $validated['category_id'],
+            'name' => $validated['name'],
+            'is_public' => $validated['is_public'] ?? true,
+        ]);
 
-        return redirect()->route('exams.create')->with('success', 'Exam created successfully.');
+        // Loop through questions and save them
+        foreach ($request->questions as $questionData) {
+            $question = ExamQuestion::create([
+                'exam_id' => $exam->id,
+                'question_text' => $questionData['text'],
+            ]);
+            $correctAnswers = $questionData['correct'] ?? [];
+            // Loop through options
+            foreach ($questionData['options'] as $index => $option) {
+                $question->options()->create([
+                    'option_text' => $option,
+                    'is_correct' => in_array($index, $correctAnswers), // 正解をチェック
+                ]);
+            }
+        }
+
+        return redirect()->route('exams.index')->with('success', 'Exam created successfully.');
     }
+
 
     // Show the edit form
     public function edit($id)

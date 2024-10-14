@@ -13,7 +13,7 @@
                         @foreach ($question->options as $option)
                             <div class="flex items-center">
                                 <input type="checkbox" disabled
-                                       @if(isset($answers[$question->id]) && in_array($option->id, $answers[$question->id])) checked @endif>
+                                       @if(isset($userAnswers[$question->id]) && in_array($option->id, $userAnswers[$question->id]->pluck('option_id')->toArray())) checked @endif>
                                 <span class="ml-2 
                                     @if(in_array($option->id, $question->options->where('is_correct', true)->pluck('id')->toArray()))
                                         text-green-600

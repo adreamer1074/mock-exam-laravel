@@ -39,7 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     // Exam(CRUD)
     Route::get('/exams/create', [ExamController::class, 'create'])->name('exams.create'); // Create form
-    Route::post('/exams', [ExamController::class, 'store'])->name('exams.store'); // Store exa
+    Route::post('/exams', [ExamController::class, 'store'])->name('exams.store'); // Store exam
+    
     Route::get('/exams/{id}/edit', [ExamController::class, 'edit'])->name('exams.edit'); // Edit form
     Route::put('/exams/{id}', [ExamController::class, 'update'])->name('exams.update'); // Update exa
     Route::delete('/exams/{id}', [ExamController::class, 'destroy'])->name('exams.destroy'); // Delete exam
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
 });
 //show を最後に置くが必要。/exams/{id} のような動的なルートが create などの静的なルートよりも上にあると、{id} として「create」をパラメータと誤解する場合があります。
 Route::get('/exams/{id}', [ExamController::class, 'show'])->name('exams.show');
+
 
 
 require __DIR__.'/auth.php';

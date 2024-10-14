@@ -11,7 +11,7 @@
                         <p class="text-gray-600">Created by: {{ $exam->user->name }}</p>
                         <p class="text-gray-600 mt-2">{{ $exam->description }}</p>
                         <a href="{{ route('exams.show', $exam->id) }}" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                            View Exam
+                            Take Exam
                         </a>
                     </div>
                 @endforeach

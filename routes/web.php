@@ -20,6 +20,13 @@ Route::get('/', [App\Http\Controllers\ExamController::class, 'home'])->name('hom
 Route::get('/popular-exams', [ExamController::class, 'popularExams'])->name('popular.exams');
 Route::get('/all-exams', [ExamController::class, 'allExams'])->name('all.exams');
 Route::get('/exams/category/{id}', [ExamController::class, 'showByCategory'])->name('exams.category');
+// exam router
+Route::get('/exams', [ExamController::class, 'index'])->name('exams.index');
+Route::get('/exams/{id}', [ExamController::class, 'show'])->name('exams.show');
+Route::post('/exams/{id}/submit', [ExamController::class, 'submitResult'])->name('exams.submit');
+//submit
+Route::post('/exams/{exam}/submit', [ExamController::class, 'submit'])->name('exam.submit');
+Route::get('/exams/{exam}/result', [ExamController::class, 'showResult'])->name('exam.result');
 
 
 Route::get('/dashboard', function () {

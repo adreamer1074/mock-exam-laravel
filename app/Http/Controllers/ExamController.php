@@ -7,7 +7,8 @@ use App\Models\Exam;
 use App\Models\ExamCategory;
 use App\Models\ExamResult;
 use App\Models\ExamAnswer;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ExamController extends Controller
 {
@@ -97,27 +98,11 @@ class ExamController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $exam = Exam::with(['questions.options', 'user', 'category'])
+        $exam = Exam::with(['questions.options', 'user', 'category']) //複数テーブルから関連付け
             ->where(function ($query) {
                 $query->where('del_flg', '!=', 1)
                     ->orWhereNull('del_flg');
@@ -215,28 +200,70 @@ class ExamController extends Controller
         return $score;
     }
     
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // Show the create form
+    public function create()
     {
-        //
+        $categories = ExamCategory::all(); // すべてのカテゴリを取得
+
+        return view('exams.create', compact('categories'));// exams/create.blade.phpビューを返す
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // Store a newly created exam
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:exam_categories,id',
+            'description' => 'nullable|string',
+            'is_public' => 'required|boolean', // バリデーションを追加
+
+        ]);
+
+        $exam = new Exam();
+        $exam->user_id = Auth::id(); // 現在ログイン中のユーザーIDを取得
+        $exam->name = $request->name;
+        $exam->category_id = $request->category_id;
+        $exam->description = $request->description;
+        $exam->is_public = $request->is_public ?? 0;    
+        $exam->save();
+
+        return redirect()->route('exams.create')->with('success', 'Exam created successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // Show the edit form
+    public function edit($id)
     {
-        //
+        $exam = Exam::where('user_id', Auth::id())->findOrFail($id); // Ensure it's the user's exam
+        return view('exams.edit', compact('exam'));
+    }
+
+    // Update an existing exam
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:exam_categories,id',
+            'description' => 'nullable|string',
+            'is_public' => 'boolean'
+        ]);
+
+        $exam = Exam::where('user_id', Auth::id())->findOrFail($id);
+        $exam->name = $request->name;
+        $exam->category_id = $request->category_id;
+        $exam->description = $request->description;
+        $exam->is_public = $request->is_public ?? 0;
+        $exam->save();
+
+        return redirect()->route('exams.edit', $exam->id)->with('success', 'Exam updated successfully.');
+    }
+
+    // Delete an exam
+    public function destroy($id)
+    {
+        $exam = Exam::where('user_id', Auth::id())->findOrFail($id);
+        $exam->del_flg = 1; // Mark as deleted
+        $exam->save();
+
+        return redirect()->route('exams.create')->with('success', 'Exam deleted successfully.');
     }
 }

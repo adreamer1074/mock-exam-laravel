@@ -16,7 +16,7 @@
                             <p class="text-gray-600 mt-2">{{ $exam->description }}</p>
                             <p class="text-gray-500 mt-2">Created by: {{ $exam->user->name }}</p>
                             <p class="text-gray-500 mt-2">Views: {{ $exam->views }}</p>
-                            <a href="#" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                            <a href="{{ route('exams.index')}}" class="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
                                 Take Exam
                             </a>
                         </div>

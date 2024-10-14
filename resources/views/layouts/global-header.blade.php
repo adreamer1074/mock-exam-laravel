@@ -33,8 +33,8 @@
         <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600">Home</a>
         <a href="{{ route('popular.exams') }}" class="text-gray-700 hover:text-blue-600">Popular Exams</a>
         <a href="{{ route('all.exams') }}" class="text-gray-700 hover:text-blue-600">All Exams</a>
-        <a href="" class="text-gray-700 hover:text-blue-600">Create Exams</a>
-        <a href="" class="text-gray-700 hover:text-blue-600">My Page</a> <!-- Added My Page link -->
+        <a href="{{ route('exams.create') }}" class="text-gray-700 hover:text-blue-600">Create Exams</a>
+        <a href="{{ route('profile.edit')}}" class="text-gray-700 hover:text-blue-600">My Page</a> <!-- Added My Page link -->
 
         <!-- Search Bar -->
         <form class="relative flex items-center">

@@ -39,10 +39,10 @@ class ExamController extends Controller
             ->orderBy('exams.views', 'desc')
             ->limit(10)
             ->get();
-    
+
         return view('popular-exams', compact('popularExams'));
     }
-    
+
     public function allExams()
     {
         $allExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.created_at')
@@ -55,10 +55,10 @@ class ExamController extends Controller
             })
             ->orderBy('exams.created_at', 'desc')
             ->get();
-    
+
         return view('all-exams', compact('allExams'));
     }
-    
+
 
 
     public function showByCategory($id)
@@ -115,50 +115,60 @@ class ExamController extends Controller
     {
         // ユーザーのIDを取得
         $userId = auth()->id();
-    
+        // ユーザーと試験に対する最新のexam_result_idを取得
+        $latestResultId = ExamResult::where('user_id', $userId)
+            ->where('exam_id', $examId)
+            ->max('exam_result_id'); // 最大のexam_result_idを取得
+
+        // もし最新のexam_result_idがnullなら1にセット
+        $newResultId = $latestResultId ? $latestResultId + 1 : 1;
+
         // ユーザーが選択した答えをループして保存
         foreach ($request->input('answers') as $questionId => $optionIds) {
             // ラジオボタンの場合は単一の値（文字列）なので配列に変換
             if (!is_array($optionIds)) {
                 $optionIds = [$optionIds];
             }
-    
+
             foreach ($optionIds as $optionId) {
                 ExamAnswer::create([
                     'user_id' => $userId,
                     'exam_id' => $examId,
                     'question_id' => $questionId,
                     'option_id' => $optionId,
+                    'exam_result_id' => $newResultId // 同じexam_result_idをセット
                 ]);
             }
         }
-    
         // ユーザーの回答を取得
         $userAnswers = ExamAnswer::where('user_id', $userId)
             ->where('exam_id', $examId)
+            ->where('exam_result_id', $newResultId) // 最新のexam_result_idで絞り込み
             ->get();
-    
+
         // スコアを計算
-        $score = $this->calculateScore($userAnswers, $examId);
-    
+        $score = $this->calculateScore($userAnswers, $examId,$latestResultId);
+
+
         // 結果を保存する（ExamResultモデルを使用）
         ExamResult::create([
             'user_id' => $userId,
             'exam_id' => $examId,
             'score' => $score,
-            'completed_at' => now(),
+            'exam_result_id' => $newResultId, // 新しいexam_result_idをセット
+            'completed_at' => now()
         ]);
-    
+
         // 結果ページへリダイレクト
         return redirect()->route('exam.result', $examId)->withInput($request->all());
     }
-    
+
 
 
     /**
      * 点数計算
      */
-    private function calculateScore($userAnswers, $examId)
+    private function calculateScore($userAnswers, $examId, $latestResultId)
     {
         // Exam IDからExamモデルを取得
         $exam = Exam::with('questions.options')->findOrFail($examId);
@@ -168,14 +178,16 @@ class ExamController extends Controller
         foreach ($exam->questions as $question) {
             // 正しい回答を取得
             $correctAnswers = $question->options->where('is_correct', true)->pluck('id')->toArray();
-            
+    
             // ユーザーの回答があるか確認
             if (isset($userAnswers[$question->id])) {
-                // ユーザーが選択した回答
-                $selectedAnswers = $userAnswers->where('question_id', $question->id)->pluck('option_id')->toArray();
-                
+                // 最新の exam_result_id に関連する回答のみを取得
+                $selectedAnswers = $userAnswers[$question->id]
+                    ->where('exam_result_id', $latestResultId) // ここで exam_result_id を確認
+                    ->pluck('option_id')
+                    ->toArray();
+    
                 // 正しい回答と選択した回答を比較
-                // 全ての正解が選択され、かつ不正解の選択肢が選択されていない場合に加点
                 if (array_diff($correctAnswers, $selectedAnswers) === [] && array_diff($selectedAnswers, $correctAnswers) === []) {
                     $score++;
                 }
@@ -187,6 +199,7 @@ class ExamController extends Controller
     
 
 
+
     /**
      * Show result for a specific exam.
      */
@@ -195,24 +208,36 @@ class ExamController extends Controller
         // ユーザーのIDを取得
         $userId = auth()->id();
 
-        // ユーザーの回答を取得
+        // 最新のExamResultのIDを取得（最新の提出）
+        $latestResult = ExamResult::where('user_id', $userId)
+            ->where('exam_id', $examId)
+            ->latest('exam_result_id') // 最新のexam_result_idでソート
+            ->first();
+
+        if (!$latestResult) {
+            // 結果がない場合は404
+            abort(404, 'No exam results found.');
+        }
+
+        // 最新のユーザーの回答を取得
         $userAnswers = ExamAnswer::where('user_id', $userId)
             ->where('exam_id', $examId)
+            ->where('exam_result_id', $latestResult->exam_result_id) // 最新の結果に関連する回答を取得
             ->get()
             ->groupBy('question_id');
 
         // 試験データを取得
         $exam = Exam::with('questions.options')->findOrFail($examId);
 
-        // ユーザーのスコアを取得
-        $result = ExamResult::where('user_id', $userId)->where('exam_id', $examId)->firstOrFail();
-        $score = $result->score;
-        $submittedAt = $result->completed_at;
-
         // 結果ページを表示
-        return view('exams.result', compact('exam', 'userAnswers', 'score', 'submittedAt'));
+        // 結果ページを表示
+        return view('exams.result', [
+            'exam' => $exam,
+            'userAnswers' => $userAnswers,
+            'score' => $latestResult->score,
+            'submittedAt' => $latestResult->completed_at
+        ]);
     }
-
 
 
     // Show the create form

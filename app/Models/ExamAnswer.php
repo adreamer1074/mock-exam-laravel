@@ -14,6 +14,7 @@ class ExamAnswer extends Model
         'exam_id',
         'question_id',
         'option_id',
+        'exam_result_id'
     ];
 
     // リレーションシップ

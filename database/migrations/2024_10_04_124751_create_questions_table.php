@@ -8,23 +8,27 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 各試験に関連付けられた質問と解説が挿入され、
+     * ユーザーが問題を見直す機能をテストするためのデータが生成されます。
      */
     public function up(): void
     {
-        Schema::create('exam_questions', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('exam_id');
+            $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
             $table->text('question_text');
+            $table->string('question_image')->nullable()->after('question_text');
+            $table->string('explanation_image')->nullable()->after('explanation');
             $table->text('explanation')->nullable();
             $table->timestamps();
-    
-            // 外部キー制約の追加を一時的にコメントアウト
             // $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
-                /*ALTER TABLE exam_results
-                ADD CONSTRAINT exam_results_exam_id_foreign
-                FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;
-                */
         });
+            // 外部キー制約の追加を一時的にコメントアウト
+                /*ALTER TABLE questions
+                ADD CONSTRAINT questions_exam_id_foreign
+                FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;
+
+                */
         
     }
 

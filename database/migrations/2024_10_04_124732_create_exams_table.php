@@ -8,6 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * 各ユーザーが作成した試験をデータベースに挿入し、
+     * 試験の公開/非公開設定や管理機能の動作確認が可能です。
      */
     public function up(): void
     {
@@ -15,11 +17,23 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
-            $table->foreignId('category_id')->constrained('exam_categories')->onDelete('cascade');
+            // $table->foreignId('category_id')->constrained('exam_categories')->onDelete('cascade');
             $table->boolean('is_public')->default(true);
+            $table->text('description')->nullable();
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
             $table->softDeletes();
+            $table->int('del_flg')->default(null);
+
         });
+
+        /*
+                ALTER TABLE `exams`
+                ADD COLUMN `category_id` BIGINT UNSIGNED NOT NULL;
+                ALTER TABLE `exams`
+                ADD CONSTRAINT `exams_category_id_foreign`
+                FOREIGN KEY (`category_id`) REFERENCES `exam_categories`(`id`)
+                ON DELETE CASCADE;  */
         
     }
 

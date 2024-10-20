@@ -8,6 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * ユーザーごとのデータが生成され、各ユーザーのロールや他のデータが定義されることで、
+     * アプリケーションの権限管理やユーザーごとの動作確認が行えます。
      */
     public function up(): void
     {

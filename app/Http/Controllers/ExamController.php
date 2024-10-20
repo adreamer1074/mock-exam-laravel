@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ExamCreateRequest;
 use App\Models\Exam; // Examモデルを使用
 use App\Models\ExamCategory; // ExamCategoryモデルを使用
 use App\Models\ExamResult; // ExamResultモデルを使用
@@ -286,21 +287,23 @@ class ExamController extends Controller
      * Store a newly created exam.
      * 新しく作成した試験を保存
      */
-    public function store(Request $request)
+    public function store(ExamCreateRequest $request)
     {
 
         try {
             // リクエストデータを検証
-            $validated = $request->validate([
-                'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
-                'name' => 'required|string|max:255', // 名前は必須、255文字以内
-                'is_public' => 'boolean', // 公開フラグ（真偽値）
-                'questions.*.text' => 'required|string', // 各質問のテキストは必須
-                'questions.*.options.*' => 'required|string', // 各質問の選択肢は必須
-                'questions.*.correct' => 'nullable|array', // 正しい回答は配列
-                'questions.*.question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 質問画像は任意
-                'questions.*.explanation_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 説明画像は任意
-            ]);
+            // $validated = $request->validate([
+            //     'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
+            //     'name' => 'required|string|max:255', // 名前は必須、255文字以内
+            //     'is_public' => 'boolean', // 公開フラグ（真偽値）
+            //     'questions.*.text' => 'required|string', // 各質問のテキストは必須
+            //     'questions.*.options.*' => 'required|string', // 各質問の選択肢は必須
+            //     'questions.*.correct' => 'nullable|array', // 正しい回答は配列
+            //     'questions.*.question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 質問画像は任意
+            //     'questions.*.explanation_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 説明画像は任意
+            // ]);
+
+            $validated = $request->all();
 
             // 試験を作成
             $exam = Exam::create([
@@ -357,6 +360,8 @@ class ExamController extends Controller
         } catch (\Throwable $th) {
             // Transaction(Rollback)
             DB::rollBack();
+            flash()->error('Something Was Wrong!.');
+
             \Log::debug(print_r($th->getMessage(), true));
             throw $th;
         }

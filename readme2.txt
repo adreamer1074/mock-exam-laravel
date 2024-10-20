@@ -54,3 +54,10 @@ DOCKER
 
  //flash message
  composer require josegus/laravel-flash
+
+ //validation
+   ./vendor/bin/sail php artisan make:request ExamCreateRequest
+
+ //japanese
+  ./vendor/bin/sail artisan lang:publish
+  https://github.com/askdkc/breezejp

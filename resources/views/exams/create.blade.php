@@ -1,7 +1,9 @@
 <x-app-layout>
     {{-- script読み込み --}}
     <x-slot name="script">
-        <script>/js/exam/create.js</script>
+        <script>
+            /js/exam / create.js
+        </script>
     </x-slot>
     <section class="bg-gray-100 py-12">
         <div class="container mx-auto max-w-3xl p-8">
@@ -30,10 +32,12 @@
                     <!-- Exam Name -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Exam Name</label>
-                        <input type="text" name="name"
+                        <input type="text" name="name" value={{ old('name') }}
                             class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter exam name" required>
                     </div>
+
+                    <!-- Exam Description -->
 
                     <!-- Is Public Checkbox -->
                     <div class="mb-6 flex items-center">
@@ -90,7 +94,8 @@
                                     placeholder="Option 1" required>
                                 <input type="checkbox" name="questions[0][correct][]" value="0" class="ml-2">
                                 Correct
-                                <button type="button" class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
+                                <button type="button"
+                                    class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
                                     <i class="fas fa-times fa-lg"></i> <!-- "×" icon -->
                                 </button>
                             </div>
@@ -114,15 +119,15 @@
     {{-- Scripts --}}
     <script>
         let questionIndex = 1;
-    
+
         // Add new question
         document.querySelector('.add-question').addEventListener('click', function() {
             const questionContainer = document.createElement('div');
             questionContainer.classList.add('question', 'mb-6');
-    
+
             // Option number reset
             let optionIndex = 1;
-    
+
             questionContainer.innerHTML = `
                 <label class="block text-gray-700 font-semibold mb-2">Question</label>
                 <div class="flex items-center space-x-4">
@@ -157,10 +162,10 @@
                 </div>
                 <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add another option</button>
             `;
-    
+
             document.getElementById('questions-container').appendChild(questionContainer);
             questionIndex++;
-    
+
             // Add event listeners for the new buttons
             questionContainer.querySelector('.add-option').addEventListener('click', function() {
                 optionIndex++;
@@ -174,19 +179,19 @@
                     </button>
                 `;
                 questionContainer.querySelector('.options-container').appendChild(optionContainer);
-    
+
                 // 削除ボタンのイベントリスナーを追加
                 optionContainer.querySelector('.delete-option').addEventListener('click', function() {
                     deleteOption(this);
                 });
             });
-    
+
             // 削除ボタンのイベントリスナーを追加
             questionContainer.querySelector('.delete-question').addEventListener('click', function() {
                 deleteQuestion(this);
             });
         });
-    
+
         // 初期の「More option」ボタンのイベントリスナーを追加
         document.querySelectorAll('.add-option').forEach((button) => {
             let optionIndex = 1; // Reset option index for each question
@@ -202,14 +207,14 @@
                     </button>
                 `;
                 button.previousElementSibling.appendChild(optionContainer);
-    
+
                 // 削除ボタンのイベントリスナーを追加
                 optionContainer.querySelector('.delete-option').addEventListener('click', function() {
                     deleteOption(this);
                 });
             });
         });
-    
+
         // 画像プレビュー機能 (質問画像用)
         document.querySelectorAll('.question-image-input').forEach(input => {
             input.addEventListener('change', function(event) {
@@ -225,7 +230,7 @@
                 }
             });
         });
-    
+
         // 画像プレビュー機能 (解説画像用)
         document.querySelectorAll('.explanation-image-input').forEach(input => {
             input.addEventListener('change', function(event) {
@@ -241,7 +246,7 @@
                 }
             });
         });
-    
+
         // 削除機能 (Question)
         function deleteQuestion(button) {
             const questionContainer = button.closest('.question');
@@ -251,7 +256,7 @@
                 alert('At least one question is required.');
             }
         }
-    
+
         // 削除機能 (Option)
         function deleteOption(button) {
             const optionContainer = button.closest('.option');
@@ -264,4 +269,3 @@
         }
     </script>
 </x-app-layout>
-    

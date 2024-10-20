@@ -310,6 +310,7 @@ class ExamController extends Controller
                 'user_id' => Auth::id(), // 作成者のユーザーIDを設定
                 'category_id' => $validated['category_id'],
                 'name' => $validated['name'],
+                'description'=>$validated['description'],
                 'is_public' => $validated['is_public'] ?? true, // デフォルトで公開
             ]);
 

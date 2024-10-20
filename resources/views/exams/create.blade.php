@@ -29,16 +29,22 @@
                         </select>
                     </div>
 
+
                     <!-- Exam Name -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Exam Name</label>
-                        <input type="text" name="name" value={{ old('name') }}
+                        <input type="text" name="name" value="{{ old('name') }}"
                             class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter exam name" required>
                     </div>
 
                     <!-- Exam Description -->
-
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">Exam Description</label>
+                        <textarea name="description" value="{{ old('description') }}"
+                            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            placeholder="Enter exam description"></textarea>
+                    </div>
                     <!-- Is Public Checkbox -->
                     <div class="mb-6 flex items-center">
                         <input type="checkbox" name="is_public" value="1" class="mr-2" checked>
@@ -89,10 +95,13 @@
                         <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                         <div class="options-container">
                             <div class="option mb-4 flex items-center space-x-4">
-                                <input type="text" name="questions[0][options][]"
+                                <input type="text" name="questions[0][options][]" 
+                                    value="{{ old('questions.0.options.0') }}" 
                                     class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                     placeholder="Option 1" required>
-                                <input type="checkbox" name="questions[0][correct][]" value="0" class="ml-2">
+                                <input type="checkbox" name="questions[0][correct][]" 
+                                        value="0" {{ old('questions.0.correct') && in_array(0, old('questions.0.correct')) ? 'checked' : '' }} 
+                                        class="ml-2">
                                 Correct
                                 <button type="button"
                                     class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
@@ -153,8 +162,12 @@
                 <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                 <div class="options-container">
                     <div class="option mb-4 flex items-center space-x-4">
-                        <input type="text" name="questions[${questionIndex}][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
-                        <input type="checkbox" name="questions[${questionIndex}][correct][]" value="0" class="ml-2"> Correct
+                        <input type="text" name="questions[${questionIndex}][options][]" 
+                                class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+                                placeholder="Option ${optionIndex}" required>
+                                <input type="checkbox" name="questions[${questionIndex}][correct][]" 
+                                value="${optionIndex}" class="ml-2">
+                                class="ml-2"> Correct
                         <button type="button" class="delete-option text-gray-500 hover:text-gray-700 ml-auto">
                             <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
                         </button>
@@ -163,7 +176,10 @@
                 <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add another option</button>
             `;
 
+            // Append to the DOM
             document.getElementById('questions-container').appendChild(questionContainer);
+            questionIndex++;
+
             questionIndex++;
 
             // Add event listeners for the new buttons

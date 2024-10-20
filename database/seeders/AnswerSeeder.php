@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Answer;
-use App\Models\Question;
+use App\Models\QuestionOption;
 
 class AnswerSeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class AnswerSeeder extends Seeder
     public function run()
     {
         // 全ての質問に対してダミーの回答を挿入
-        $questions = Question::all();
+        $questions = QuestionOption::all();
 
         foreach ($questions as $question) {
             // 正しい回答

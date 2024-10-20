@@ -48,7 +48,6 @@
                                 placeholder="Enter your question" rows="3" required></textarea>
 
                             <!-- 質問の画像アップロードアイコン -->
-                            <!-- 質問の画像アップロードアイコン -->
                             <label class="cursor-pointer flex items-center space-x-2">
                                 <input type="file" name="questions[0][question_image]" accept="image/*"
                                     class="hidden question-image-input">
@@ -56,6 +55,9 @@
                             </label>
                             <img class="question-image-preview mt-2 hidden"
                                 style="max-width: 100px; max-height: 100px;" /> <!-- プレビュー画像 -->
+                            <button type="button" class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
+                                <i class="fas fa-times fa-lg"></i> <!-- "×" icon -->
+                            </button>
                         </div>
 
                         <!-- Explanationフィールドの追加 -->
@@ -84,6 +86,9 @@
                                     placeholder="Option 1" required>
                                 <input type="checkbox" name="questions[0][correct][]" value="0" class="ml-2">
                                 Correct
+                                <button type="button" class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
+                                    <i class="fas fa-times fa-lg"></i> <!-- "×" icon -->
+                                </button>
                             </div>
                         </div>
                         <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add
@@ -104,15 +109,15 @@
 
     <script>
         let questionIndex = 1;
-
+    
         // Add new question
         document.querySelector('.add-question').addEventListener('click', function() {
             const questionContainer = document.createElement('div');
             questionContainer.classList.add('question', 'mb-6');
-
+    
             // Option number reset
             let optionIndex = 1;
-
+    
             questionContainer.innerHTML = `
                 <label class="block text-gray-700 font-semibold mb-2">Question</label>
                 <div class="flex items-center space-x-4">
@@ -121,8 +126,11 @@
                         <input type="file" name="questions[${questionIndex}][question_image]" accept="image/*" class="hidden">
                         <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
                     </label>
+                    <button type="button" class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
+                        <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
+                    </button>
                 </div>
-
+    
                 <label class="block text-gray-700 font-semibold mt-4 mb-2">Explanation</label>
                 <div class="flex items-center space-x-4">
                     <textarea name="questions[${questionIndex}][explanation]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter explanation" rows="3"></textarea>
@@ -131,34 +139,50 @@
                         <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
                     </label>
                 </div>
-
+    
                 <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                 <div class="options-container">
                     <div class="option mb-4 flex items-center space-x-4">
                         <input type="text" name="questions[${questionIndex}][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
                         <input type="checkbox" name="questions[${questionIndex}][correct][]" value="0" class="ml-2"> Correct
+                        <button type="button" class="delete-option text-gray-500 hover:text-gray-700 ml-auto">
+                            <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
+                        </button>
                     </div>
                 </div>
                 <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add another option</button>
             `;
-
+    
             document.getElementById('questions-container').appendChild(questionContainer);
             questionIndex++;
-
-            // Add event listener for the new "More option" button
+    
+            // Add event listeners for the new buttons
             questionContainer.querySelector('.add-option').addEventListener('click', function() {
-                optionIndex++; // Increment option index for each question
+                optionIndex++;
                 const optionContainer = document.createElement('div');
                 optionContainer.classList.add('option', 'mb-4', 'flex', 'items-center', 'space-x-4');
                 optionContainer.innerHTML = `
                     <input type="text" name="questions[${questionIndex - 1}][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
                     <input type="checkbox" name="questions[${questionIndex - 1}][correct][]" value="${optionIndex - 1}" class="ml-2"> Correct
+                    <button type="button" class="delete-option text-gray-500 hover:text-gray-700 ml-auto">
+                        <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
+                    </button>
                 `;
                 questionContainer.querySelector('.options-container').appendChild(optionContainer);
+    
+                // 削除ボタンのイベントリスナーを追加
+                optionContainer.querySelector('.delete-option').addEventListener('click', function() {
+                    deleteOption(this);
+                });
+            });
+    
+            // 削除ボタンのイベントリスナーを追加
+            questionContainer.querySelector('.delete-question').addEventListener('click', function() {
+                deleteQuestion(this);
             });
         });
-
-        // Add event listener for the initial "More option" button
+    
+        // 初期の「More option」ボタンのイベントリスナーを追加
         document.querySelectorAll('.add-option').forEach((button) => {
             let optionIndex = 1; // Reset option index for each question
             button.addEventListener('click', function() {
@@ -168,12 +192,20 @@
                 optionContainer.innerHTML = `
                     <input type="text" name="questions[${questionIndex - 1}][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
                     <input type="checkbox" name="questions[${questionIndex - 1}][correct][]" value="${optionIndex - 1}" class="ml-2"> Correct
+                    <button type="button" class="delete-option text-gray-500 hover:text-gray-700 ml-auto">
+                        <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
+                    </button>
                 `;
                 button.previousElementSibling.appendChild(optionContainer);
+    
+                // 削除ボタンのイベントリスナーを追加
+                optionContainer.querySelector('.delete-option').addEventListener('click', function() {
+                    deleteOption(this);
+                });
             });
         });
-
-        // 画像ファイルが選択されたときにプレビューを表示
+    
+        // 画像プレビュー機能 (質問画像用)
         document.querySelectorAll('.question-image-input').forEach(input => {
             input.addEventListener('change', function(event) {
                 const preview = this.closest('div').querySelector('.question-image-preview');
@@ -182,14 +214,14 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         preview.src = e.target.result;
-                        preview.classList.remove('hidden'); // 画像が選択されたらプレビューを表示
+                        preview.classList.remove('hidden');
                     };
-                    reader.readAsDataURL(file); // ファイルを読み込む
+                    reader.readAsDataURL(file);
                 }
             });
         });
-
-        // 画像ファイルが選択されたときにプレビューを表示 (解説画像用)
+    
+        // 画像プレビュー機能 (解説画像用)
         document.querySelectorAll('.explanation-image-input').forEach(input => {
             input.addEventListener('change', function(event) {
                 const preview = this.closest('div').querySelector('.explanation-image-preview');
@@ -198,11 +230,33 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         preview.src = e.target.result;
-                        preview.classList.remove('hidden'); // 画像が選択されたらプレビューを表示
+                        preview.classList.remove('hidden');
                     };
-                    reader.readAsDataURL(file); // ファイルを読み込む
+                    reader.readAsDataURL(file);
                 }
             });
         });
+    
+        // 削除機能 (Question)
+        function deleteQuestion(button) {
+            const questionContainer = button.closest('.question');
+            if (document.querySelectorAll('.question').length > 1) {
+                questionContainer.remove();
+            } else {
+                alert('At least one question is required.');
+            }
+        }
+    
+        // 削除機能 (Option)
+        function deleteOption(button) {
+            const optionContainer = button.closest('.option');
+            const optionsContainer = button.closest('.options-container');
+            if (optionsContainer.querySelectorAll('.option').length > 1) {
+                optionContainer.remove();
+            } else {
+                alert('At least one option is required.');
+            }
+        }
     </script>
 </x-app-layout>
+    

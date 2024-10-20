@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
             $table->text('question_text');
+            $table->string('question_image')->nullable()->after('question_text');
+            $table->string('explanation_image')->nullable()->after('explanation');
             $table->text('explanation')->nullable();
             $table->timestamps();
             // $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');

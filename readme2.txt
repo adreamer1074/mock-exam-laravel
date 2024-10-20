@@ -48,8 +48,5 @@ DOCKER
 	./vendor/bin/sail php artisan make:controller ExamResultController --resource
 	./vendor/bin/sail php artisan make:controller TodoListController --resource
 
-
-
-
-
-	 
+//s3
+ ./vendor/bin/sail composer require league/flysystem-aws-s3-v3

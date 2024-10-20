@@ -12,6 +12,9 @@ use App\Models\QuestionOption; // QuestionOptionモデルを使用
 
 use Illuminate\Support\Facades\Auth; // 認証用のファサードを使用
 use App\Models\User; // Userモデルを使用
+use Illuminate\Contracts\Cache\Store;
+use Illuminate\Support\Facades\Storage;
+
 
 class ExamController extends Controller
 {
@@ -277,7 +280,7 @@ class ExamController extends Controller
         return view('exams.create', compact('categories'));
     }
 
-    /**
+      /**
      * Store a newly created exam.
      * 新しく作成した試験を保存
      */
@@ -291,8 +294,10 @@ class ExamController extends Controller
             'questions.*.text' => 'required|string', // 各質問のテキストは必須
             'questions.*.options.*' => 'required|string', // 各質問の選択肢は必須
             'questions.*.correct' => 'nullable|array', // 正しい回答は配列
+            'questions.*.question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 質問画像は任意
+            'questions.*.explanation_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 説明画像は任意
         ]);
-
+        
         // 試験を作成
         $exam = Exam::create([
             'user_id' => Auth::id(), // 作成者のユーザーIDを設定
@@ -303,11 +308,35 @@ class ExamController extends Controller
 
         // 質問をループして保存
         foreach ($request->questions as $questionData) {
+            // 画像のアップロード処理
+            $questionImageUrl = null;
+            $explanationImageUrl = null;
+            $explanationData = null;
+
+            // question_image が存在すれば S3 にアップロード
+            if (isset($questionData['question_image'])) {
+                $questionImageUrl = $questionData['question_image']->store('questions', 's3');
+                $questionImageUrl = Storage::disk('s3')->url($questionImageUrl); // S3のURLを取得
+            }
+
+            // explanation_image が存在すれば S3 にアップロード
+            if (isset($questionData['explanation_image'])) {
+                $explanationImageUrl = $questionData['explanation_image']->store('explanations', 's3');
+                $explanationImageUrl = Storage::disk('s3')->url($explanationImageUrl); // S3のURLを取得
+            }
+
+            // 質問を保存
             $question = ExamQuestion::create([
                 'exam_id' => $exam->id,
                 'question_text' => $questionData['text'],
+                'question_image' => $questionImageUrl, // 質問画像URLを保存
+                'explanation_image' => $explanationImageUrl, // 説明画像URLを保存
+                'explanation' => $explanationData['text'],
+
             ]);
+
             $correctAnswers = $questionData['correct'] ?? [];
+            
             // 選択肢をループして保存
             foreach ($questionData['options'] as $index => $option) {
                 $question->options()->create([
@@ -343,7 +372,7 @@ class ExamController extends Controller
             'name' => 'required|string|max:255', // 名前は必須
             'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
             'description' => 'nullable|string', // 説明は任意
-            'is_public' => 'boolean' // 公開フラグ
+            'is_public' => 'boolean', // 公開フラグ
         ]);
 
         // ユーザーの試験のみを取得（所有者確認）

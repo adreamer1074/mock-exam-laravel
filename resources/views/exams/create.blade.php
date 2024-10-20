@@ -3,7 +3,7 @@
         <div class="container mx-auto max-w-3xl p-8">
             <h1 class="text-4xl font-extrabold text-center text-blue-600 mb-12">Create Exam</h1>
 
-            <form action="{{ route('exams.store') }}" method="POST">
+            <form action="{{ route('exams.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Exam Setting Section -->
@@ -42,9 +42,39 @@
                 <div id="questions-container">
                     <div class="question mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Question</label>
-                        <textarea name="questions[0][text]"
-                            class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Enter your question" rows="3" required></textarea>
+                        <div class="flex items-center space-x-4">
+                            <textarea name="questions[0][text]"
+                                class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                placeholder="Enter your question" rows="3" required></textarea>
+
+                            <!-- 質問の画像アップロードアイコン -->
+                            <!-- 質問の画像アップロードアイコン -->
+                            <label class="cursor-pointer flex items-center space-x-2">
+                                <input type="file" name="questions[0][question_image]" accept="image/*"
+                                    class="hidden question-image-input">
+                                <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                            </label>
+                            <img class="question-image-preview mt-2 hidden"
+                                style="max-width: 100px; max-height: 100px;" /> <!-- プレビュー画像 -->
+                        </div>
+
+                        <!-- Explanationフィールドの追加 -->
+                        <label class="block text-gray-700 font-semibold mt-4 mb-2">Explanation</label>
+                        <div class="flex items-center space-x-4">
+                            <textarea name="questions[0][explanation]"
+                                class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                placeholder="Enter explanation" rows="3"></textarea>
+
+                            <!-- 解説の画像アップロードアイコン -->
+                            <!-- 解説の画像アップロードアイコン -->
+                            <label class="cursor-pointer flex items-center space-x-2">
+                                <input type="file" name="questions[0][explanation_image]" accept="image/*"
+                                    class="hidden explanation-image-input">
+                                <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                            </label>
+                            <img class="explanation-image-preview mt-2 hidden"
+                                style="max-width: 100px; max-height: 100px;" /> <!-- 解説のプレビュー画像 -->
+                        </div>
 
                         <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                         <div class="options-container">
@@ -85,7 +115,22 @@
 
             questionContainer.innerHTML = `
                 <label class="block text-gray-700 font-semibold mb-2">Question</label>
-                <textarea name="questions[${questionIndex}][text]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter your question" rows="3" required></textarea>
+                <div class="flex items-center space-x-4">
+                    <textarea name="questions[${questionIndex}][text]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter your question" rows="3" required></textarea>
+                    <label class="cursor-pointer flex items-center space-x-2">
+                        <input type="file" name="questions[${questionIndex}][question_image]" accept="image/*" class="hidden">
+                        <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                    </label>
+                </div>
+
+                <label class="block text-gray-700 font-semibold mt-4 mb-2">Explanation</label>
+                <div class="flex items-center space-x-4">
+                    <textarea name="questions[${questionIndex}][explanation]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Enter explanation" rows="3"></textarea>
+                    <label class="cursor-pointer flex items-center space-x-2">
+                        <input type="file" name="questions[${questionIndex}][explanation_image]" accept="image/*" class="hidden">
+                        <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                    </label>
+                </div>
 
                 <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                 <div class="options-container">
@@ -121,10 +166,42 @@
                 const optionContainer = document.createElement('div');
                 optionContainer.classList.add('option', 'mb-4', 'flex', 'items-center', 'space-x-4');
                 optionContainer.innerHTML = `
-                    <input type="text" name="questions[0][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
-                    <input type="checkbox" name="questions[0][correct][]" value="${optionIndex - 1}" class="ml-2"> Correct
+                    <input type="text" name="questions[${questionIndex - 1}][options][]" class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Option ${optionIndex}" required>
+                    <input type="checkbox" name="questions[${questionIndex - 1}][correct][]" value="${optionIndex - 1}" class="ml-2"> Correct
                 `;
-                document.querySelector('.question .options-container').appendChild(optionContainer);
+                button.previousElementSibling.appendChild(optionContainer);
+            });
+        });
+
+        // 画像ファイルが選択されたときにプレビューを表示
+        document.querySelectorAll('.question-image-input').forEach(input => {
+            input.addEventListener('change', function(event) {
+                const preview = this.closest('div').querySelector('.question-image-preview');
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden'); // 画像が選択されたらプレビューを表示
+                    };
+                    reader.readAsDataURL(file); // ファイルを読み込む
+                }
+            });
+        });
+
+        // 画像ファイルが選択されたときにプレビューを表示 (解説画像用)
+        document.querySelectorAll('.explanation-image-input').forEach(input => {
+            input.addEventListener('change', function(event) {
+                const preview = this.closest('div').querySelector('.explanation-image-preview');
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden'); // 画像が選択されたらプレビューを表示
+                    };
+                    reader.readAsDataURL(file); // ファイルを読み込む
+                }
             });
         });
     </script>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExamQuestion extends Model
 {
-    protected $fillable = ['exam_id', 'question_text', 'explanation'];
+    protected $fillable = ['exam_id', 'question_text','question_image', 'explanation','explanation_image'];
 
 
     // Define the relationship with QuestionOption

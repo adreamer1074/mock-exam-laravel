@@ -50,3 +50,7 @@ DOCKER
 
 //s3
  ./vendor/bin/sail composer require league/flysystem-aws-s3-v3
+
+
+ //flash message
+ composer require josegus/laravel-flash

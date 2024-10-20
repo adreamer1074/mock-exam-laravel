@@ -1,4 +1,8 @@
 <x-app-layout>
+    {{-- script読み込み --}}
+    <x-slot name="script">
+        <script>/js/exam/create.js</script>
+    </x-slot>
     <section class="bg-gray-100 py-12">
         <div class="container mx-auto max-w-3xl p-8">
             <h1 class="text-4xl font-extrabold text-center text-blue-600 mb-12">Create Exam</h1>
@@ -107,6 +111,7 @@
         </div>
     </section>
 
+    {{-- Scripts --}}
     <script>
         let questionIndex = 1;
     

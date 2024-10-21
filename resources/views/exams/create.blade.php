@@ -8,10 +8,10 @@
     <section class="bg-gray-100 py-12">
         <div class="container mx-auto max-w-3xl p-8">
             <h1 class="text-4xl font-extrabold text-center text-blue-600 mb-12">Create Exam</h1>
-
+    
             <form action="{{ route('exams.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
+    
                 <!-- Exam Setting Section -->
                 <div class="bg-white shadow-lg rounded-lg p-10 mb-12">
                     <h2 class="text-2xl font-semibold text-blue-600 mb-6">Exam Settings</h2>
@@ -37,7 +37,7 @@
                             class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter exam name" required>
                     </div>
-
+    
                     <!-- Exam Description -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Exam Description</label>
@@ -45,85 +45,84 @@
                             class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                             placeholder="Enter exam description"></textarea>
                     </div>
+    
                     <!-- Is Public Checkbox -->
                     <div class="mb-6 flex items-center">
                         <input type="checkbox" name="is_public" value="1" class="mr-2" checked>
                         <label class="text-gray-700">Is Public?</label>
                     </div>
                 </div>
-
-                <!-- Questions and Options Section -->
+    
+                <!-- Questions Section -->
                 <div id="questions-container">
+                    <!-- Default question -->
                     <div class="question mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Question</label>
                         <div class="flex items-center space-x-4">
                             <textarea name="questions[0][text]"
                                 class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 placeholder="Enter your question" rows="3" required></textarea>
-
-                            <!-- 質問の画像アップロードアイコン -->
+    
+                            <!-- Question image upload icon -->
                             <label class="cursor-pointer flex items-center space-x-2">
                                 <input type="file" name="questions[0][question_image]" accept="image/*"
                                     class="hidden question-image-input">
-                                <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                                <i class="fas fa-image text-blue-500"></i> <!-- Icon -->
                             </label>
                             <img class="question-image-preview mt-2 hidden"
-                                style="max-width: 100px; max-height: 100px;" /> <!-- プレビュー画像 -->
-                            <button type="button" class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
-                                <i class="fas fa-times fa-lg"></i> <!-- "×" icon -->
-                            </button>
+                                style="max-width: 100px; max-height: 100px;" /> <!-- Image preview -->
                         </div>
-
-                        <!-- Explanationフィールドの追加 -->
+    
+                        <!-- Explanation -->
                         <label class="block text-gray-700 font-semibold mt-4 mb-2">Explanation</label>
                         <div class="flex items-center space-x-4">
                             <textarea name="questions[0][explanation]"
+                            {{-- 動いてない --}}
+                                value="{{ old('"questions[explanation') }}"
                                 class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 placeholder="Enter explanation" rows="3"></textarea>
-
-                            <!-- 解説の画像アップロードアイコン -->
-                            <!-- 解説の画像アップロードアイコン -->
+    
+                            <!-- Explanation image upload icon -->
                             <label class="cursor-pointer flex items-center space-x-2">
                                 <input type="file" name="questions[0][explanation_image]" accept="image/*"
                                     class="hidden explanation-image-input">
-                                <i class="fas fa-image text-blue-500"></i> <!-- アイコン -->
+                                <i class="fas fa-image text-blue-500"></i> <!-- Icon -->
                             </label>
                             <img class="explanation-image-preview mt-2 hidden"
-                                style="max-width: 100px; max-height: 100px;" /> <!-- 解説のプレビュー画像 -->
+                                style="max-width: 100px; max-height: 100px;" /> <!-- Explanation image preview -->
                         </div>
-
+    
+                        <!-- Answer Options -->
                         <label class="block text-gray-700 font-semibold mt-4 mb-2">Answer Options</label>
                         <div class="options-container">
                             <div class="option mb-4 flex items-center space-x-4">
-                                <input type="text" name="questions[0][options][]" 
-                                    value="{{ old('questions.0.options.0') }}" 
+                                <input type="text" name="questions[0][options][]"
+                                    value="{{ old('questions.0.options.0') }}"
                                     class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                     placeholder="Option 1" required>
-                                <input type="checkbox" name="questions[0][correct][]" 
-                                        value="0" {{ old('questions.0.correct') && in_array(0, old('questions.0.correct')) ? 'checked' : '' }} 
-                                        class="ml-2">
+                                <input type="checkbox" name="questions[0][correct][]" value="0"
+                                    {{ old('questions.0.correct') && in_array(0, old('questions.0.correct')) ? 'checked' : '' }}
+                                    class="ml-2">
                                 Correct
-                                <button type="button"
-                                    class="delete-question text-gray-500 hover:text-gray-700 ml-auto">
-                                    <i class="fas fa-times fa-lg"></i> <!-- "×" icon -->
-                                </button>
                             </div>
                         </div>
-                        <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add
-                            another option</button>
+    
+                        <!-- Add more options button -->
+                        <button type="button" class="add-option text-blue-500 hover:text-blue-700 font-semibold">+ Add another option</button>
                     </div>
                 </div>
-
-                <button type="button" class="add-question text-blue-500 hover:text-blue-700 font-semibold mt-6">+ Add
-                    another question</button>
-
+    
+                <!-- Add more questions button -->
+                <button type="button" class="add-question text-blue-500 hover:text-blue-700 font-semibold mt-6">+ Add another question</button>
+    
+                <!-- Submit button -->
                 <button type="submit"
                     class="mt-8 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">Create
                     Exam</button>
-        </div>
-        </form>
+            </form>
         </div>
     </section>
+    
 
     {{-- Scripts --}}
     <script>
@@ -167,7 +166,7 @@
                                 placeholder="Option ${optionIndex}" required>
                                 <input type="checkbox" name="questions[${questionIndex}][correct][]" 
                                 value="${optionIndex}" class="ml-2">
-                                class="ml-2"> Correct
+                                Correct
                         <button type="button" class="delete-option text-gray-500 hover:text-gray-700 ml-auto">
                             <i class="fas fa-times fa-lg"></i> <!-- 削除ボタン -->
                         </button>

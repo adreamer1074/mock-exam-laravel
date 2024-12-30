@@ -13,15 +13,15 @@ DOCKER
 	*create migration
 	 - php artisan make:migration create_users_table
 	 - php artisan make:migration create_todo_list_table
-	 - php artisan make:migration create_exam_categories_table
+	 - php artisan make:migration create_categories_table
 	 - php artisan make:migration create_exams_table
 	 - php artisan make:migration create_exam_questions_table
 	 - php artisan make:migration create_question_options_table 
-	 - php artisan make:migration create_exam_results_table
+	 - php artisan make:migration create_results_table
 	 - php artisan make:migration create_favorites_table
 	 - php artisan make:migration create_answers_table
 	 *exec migration(外部制約注意（外部制約は後で設定した方がいい)
-	 - php artisan migrate (./vendor/bin/sail artisan migrate)
+	 - php artisan migrate (./vendor/bin/sail artisan make:migration)
 	 *seeder
 	 - php artisan make:seeder UserSeeder
 	 - php artisan make:seeder ExamSeeder

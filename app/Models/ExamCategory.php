@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExamCategory extends Model
 {
-    protected $fillable = ['name'];
+    protected $table = 'categories';
 
     public function exams()
     {

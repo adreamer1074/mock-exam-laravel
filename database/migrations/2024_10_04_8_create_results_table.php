@@ -19,12 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id'); // ユーザーID
             $table->decimal('score', 5, 2);
             $table->timestamps();
-            // 外部キー制約の追加するのはmysql cmdで実行
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
-                /* ALTER TABLE results
-                 ADD CONSTRAINT results_exam_id_foreign
-                 FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;*/
-
         });
         
     }

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
             $table->softDeletes();
-            $table->int('del_flg')->default(null);
+            $table->integer('del_flg')->default(0);
 
         });
 

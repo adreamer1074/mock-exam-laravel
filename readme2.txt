@@ -61,3 +61,13 @@ DOCKER
  //japanese
   ./vendor/bin/sail artisan lang:publish
   https://github.com/askdkc/breezejp
+
+
+//check ipv4
+  docker network inspect mock-exam-laravel_sail  
+
+//vite install
+  ./vendor/bin/sail npm install vite --save-dev
+//run
+  ./vendor/bin/sail npm run build
+

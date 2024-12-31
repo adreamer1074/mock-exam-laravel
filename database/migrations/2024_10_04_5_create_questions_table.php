@@ -17,19 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
             $table->text('question_text');
-            $table->string('question_image')->nullable()->after('question_text');
-            $table->string('explanation_image')->nullable()->after('explanation');
+            $table->string('question_image')->nullable();
             $table->text('explanation')->nullable();
+            $table->string('explanation_image')->nullable();
             $table->timestamps();
-            $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
         });
-            // 外部キー制約の追加を一時的にコメントアウト
-                /*ALTER TABLE questions
-                ADD CONSTRAINT questions_exam_id_foreign
-                FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;
-
-                */
-        
     }
 
     /**

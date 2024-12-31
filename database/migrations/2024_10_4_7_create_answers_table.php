@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 
 
-class CreateExamAnswersTable extends Migration
+class CreateAnswersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -23,7 +23,7 @@ class CreateExamAnswersTable extends Migration
             $table->unsignedBigInteger('option_id');
             $table->timestamps();
 
-            // 外部キー制約
+            // Foreign key constraints
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');

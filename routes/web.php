@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExamController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +49,11 @@ Route::middleware('auth')->group(function () {
 //show を最後に置くが必要。/exams/{id} のような動的なルートが create などの静的なルートよりも上にあると、{id} として「create」をパラメータと誤解する場合があります。
 Route::get('/exams/{id}', [ExamController::class, 'show'])->name('exams.show');
 
+// Auth routes for AWS Cognito integration
+// Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+// Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 require __DIR__.'/auth.php';

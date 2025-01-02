@@ -70,4 +70,6 @@ DOCKER
   ./vendor/bin/sail npm install vite --save-dev
 //run
   ./vendor/bin/sail npm run build
+  ./vendor/bin/sail artisan serve     
 
+//cognito

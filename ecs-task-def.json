@@ -1,0 +1,29 @@
+{
+  "family": "laravel-task",
+  "containerDefinitions": [
+    {
+      "name": "laravel-app",
+      "image": "placeholder", 
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 9000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "APP_ENV", "value": "production" },
+        { "name": "APP_DEBUG", "value": "false" },
+        { "name": "DB_HOST", "value": "your-db-host" },
+        { "name": "DB_DATABASE", "value": "laravel" },
+        { "name": "DB_USERNAME", "value": "your-username" },
+        { "name": "DB_PASSWORD", "value": "your-password" }
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole"
+}

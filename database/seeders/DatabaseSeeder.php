@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         // Call the UserSeeder to seed the users table
         $this->call(UserSeeder::class);
 
-        // Call the ExamCategorySeeder to seed the exam_categories table
+        // Call the ExamCategorySeeder to seed the categories table
         $this->call(ExamCategorySeeder::class);
 
         // Call the ExamSeeder to seed the exams table
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         // Call the TodoListSeeder to seed the todo_lists table
         $this->call(TodoListSeeder::class);
 
-        // Call the ExamResultSeeder to seed the exam_results table
+        // Call the ExamResultSeeder to seed the results table
         $this->call(ExamResultSeeder::class);
     }
 }

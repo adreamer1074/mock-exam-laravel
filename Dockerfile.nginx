@@ -1,0 +1,24 @@
+# Nginxのベースイメージ
+FROM nginx:alpine
+
+# Nginxの設定ファイルをコピー
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# アプリケーションコード（publicディレクトリのみでOKですが、全部コピーしても問題ありません）
+COPY . /var/www/html
+
+
+# public フォルダのパーミッション設定（LaravelのpublicディレクトリにNginxがアクセスできるように）
+RUN chown -R nginx:nginx /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# ★★★ ログを標準出力に出力するように設定 ★★★
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
+
+
+    
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

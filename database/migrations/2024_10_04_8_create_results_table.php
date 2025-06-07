@@ -13,18 +13,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exam_results', function (Blueprint $table) {
+        Schema::create('results', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('exam_id');
             $table->unsignedBigInteger('user_id'); // ユーザーID
             $table->decimal('score', 5, 2);
             $table->timestamps();
-            // 外部キー制約の追加するのはmysql cmdで実行
-            // $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
-                /* ALTER TABLE exam_results
-                 ADD CONSTRAINT exam_results_exam_id_foreign
-                 FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE CASCADE;*/
-
+            $table->foreign('exam_id')->references('id')->on('exams')->onDelete('cascade');
         });
         
     }
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exam_results');
+        Schema::dropIfExists('results');
     }
 };

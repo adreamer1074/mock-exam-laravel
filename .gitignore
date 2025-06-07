@@ -23,3 +23,4 @@ yarn-error.log
 .gitattributes
 docker-compose.yml
 document.md
+.DS_Store

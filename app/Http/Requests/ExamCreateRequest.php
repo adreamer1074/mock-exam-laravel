@@ -23,7 +23,7 @@ class ExamCreateRequest extends FormRequest
     {
         return [
             //form nameの属性で指定 
-            'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
+            'category_id' => 'required|exists:categories,id', // 存在するカテゴリID
             'name' => 'required|string|max:255', // 名前は必須、255文字以内
             'is_public' => 'boolean', // 公開フラグ（真偽値）
             'questions.*.text' => 'required|string', // 各質問のテキストは必須

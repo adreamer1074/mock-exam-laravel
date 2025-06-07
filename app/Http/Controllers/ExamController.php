@@ -40,9 +40,9 @@ class ExamController extends Controller
     public function popularExams()
     {
         // 人気の試験を取得（公開、削除されていないもの）
-        $popularExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.views', 'exams.created_at')
+        $popularExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'categories.name as category_name', 'exams.description', 'exams.views', 'exams.created_at')
             ->join('users', 'users.id', '=', 'exams.user_id') // ユーザー情報を結合
-            ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id') // カテゴリ情報を結合
+            ->join('categories', 'categories.id', '=', 'exams.category_id') // カテゴリ情報を結合
             ->where('exams.is_public', '=', 1) // 公開の試験のみ
             ->where(function ($query) {
                 $query->where('del_flg', '!=', 1) // 削除されていない試験
@@ -63,9 +63,9 @@ class ExamController extends Controller
     public function allExams()
     {
         // すべての試験を取得（公開、削除されていないもの）
-        $allExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'exam_categories.name as category_name', 'exams.description', 'exams.created_at')
+        $allExams = Exam::select('exams.id', 'exams.name', 'users.name as user_name', 'categories.name as category_name', 'exams.description', 'exams.created_at')
             ->join('users', 'users.id', '=', 'exams.user_id') // ユーザー情報を結合
-            ->join('exam_categories', 'exam_categories.id', '=', 'exams.category_id') // カテゴリ情報を結合
+            ->join('categories', 'categories.id', '=', 'exams.category_id') // カテゴリ情報を結合
             ->where('exams.is_public', '=', 1) // 公開の試験のみ
             ->where(function ($query) {
                 $query->where('del_flg', '!=', 1) // 削除されていない試験
@@ -293,7 +293,7 @@ class ExamController extends Controller
         try {
             // リクエストデータを検証
             // $validated = $request->validate([
-            //     'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
+            //     'category_id' => 'required|exists:categories,id', // 存在するカテゴリID
             //     'name' => 'required|string|max:255', // 名前は必須、255文字以内
             //     'is_public' => 'boolean', // 公開フラグ（真偽値）
             //     'questions.*.text' => 'required|string', // 各質問のテキストは必須
@@ -388,7 +388,7 @@ class ExamController extends Controller
         // リクエストデータを検証
         $request->validate([
             'name' => 'required|string|max:255', // 名前は必須
-            'category_id' => 'required|exists:exam_categories,id', // 存在するカテゴリID
+            'category_id' => 'required|exists:categories,id', // 存在するカテゴリID
             'description' => 'nullable|string', // 説明は任意
             'is_public' => 'boolean', // 公開フラグ
         ]);
